@@ -1,0 +1,61 @@
+{
+  "host": "0.0.0.0",
+  "port": 8080,
+  "access_log_format": "%a %{X-Real-IP}i %t \"%r\" %s %b \"%{User-Agent}i\" %D",
+  "logging": {
+      "version": 1,
+      "handlers": {
+          "console": {
+              "class": "logging.StreamHandler",
+              "formatter": "default",
+              "level": "CRITICAL"
+          },
+          "file": {
+              "class": "logging.handlers.RotatingFileHandler",
+              "filename": "C:\\projects\\crud_db\\logs\\crud_db.log",
+              "maxBytes": 1048576,
+              "backupCount": 4,
+              "formatter": "default",
+              "level": "DEBUG"
+          },
+          "access_log": {
+              "class": "logging.handlers.RotatingFileHandler",
+              "filename": "C:\\projects\\crud_db\\logs\\access.log",
+              "maxBytes": 1048576,
+              "backupCount": 4,
+              "formatter": "access_log",
+              "level": "DEBUG"
+          }
+      },
+      "loggers":{
+          "aiohttp.access":{
+              "handlers": ["access_log"],
+              "level": "DEBUG"
+          },
+          "app":{
+              "handlers": ["file"],
+              "level": "DEBUG"
+          },
+          "m7-aiohttp":{
+              "handlers": ["file"],
+              "level": "DEBUG"
+          },
+          "crud_db":{
+              "handlers": ["file"],
+              "level": "DEBUG"
+          }
+      },
+      "formatters":{
+          "default":{
+              "format":"%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+          },
+          "access_log":{
+              "format":"%(message)s"
+          }
+      },
+      "root": {
+          "level": "ERROR",
+          "handlers": ["console"]
+      }
+  }
+}
