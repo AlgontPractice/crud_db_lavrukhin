@@ -12,7 +12,7 @@
           },
           "file": {
               "class": "logging.handlers.RotatingFileHandler",
-              "filename": "C:\\projects\\crud_db\\logs\\crud_db.log",
+              "filename": "D:\\MyProjects\\crud_db_lavrukhin\\crud_db_lavrukhin\\logs\\crud_db.log",
               "maxBytes": 1048576,
               "backupCount": 4,
               "formatter": "default",
@@ -20,7 +20,7 @@
           },
           "access_log": {
               "class": "logging.handlers.RotatingFileHandler",
-              "filename": "C:\\projects\\crud_db\\logs\\access.log",
+              "filename": "D:\\MyProjects\\crud_db_lavrukhin\\crud_db_lavrukhin\\logs\\access.log",
               "maxBytes": 1048576,
               "backupCount": 4,
               "formatter": "access_log",

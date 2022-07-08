@@ -13,17 +13,15 @@ from crud_db.app import create_app
 def get_config_files():
     """
     Gets configuration profile name
-
     Returns:
         tuple (service_config)
-
     """
-    parser = argparse.ArgumentParser(description='crud_db service')
+    parser = argparse.ArgumentParser(description='crud_db_lavrukhin service')
     parser.add_argument(
         '--config',
         help='configuration file name',
         type=str,
-        default='D:\MyProjects\crud_db_lavrukhin\crud_db.json')  # TODO: в проекте есть файл crud_db.json - его надо положить в папку, указанную тут. При необходимости каталог можно изменить
+        default='D:\MyProjects\crud_db_lavrukhin\crud_db_lavrukhin\crud_db.json')  # TODO: в проекте есть файл orbbec-mjpeg-streamer.json - его надо положить в папку, указанную тут. При необходимости каталог можно изменить
     args, _ = parser.parse_known_args()
 
     if not args.config:

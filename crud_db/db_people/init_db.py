@@ -35,7 +35,7 @@ async def add(engine, person: dict) -> str:
     async with engine.acquire() as conn:
         await conn.execute(users.insert().values(first_name=person['first_name'], last_name=person['last_name']))
         id = 0
-        async for row in conn.execute(users.select().where(users.c.first_name == 'Ivan4ik')):
+        async for row in conn.execute(users.select().where(users.c.first_name == person['first_name'])):
             if row.id > id:
                 id = row.id
         return id
@@ -49,8 +49,8 @@ async def delete(engine, id: str):
         await conn.execute(sa.delete(users).where(users.c.id == int(id)))
 
 
-#Удаление элемента
-async def change(engine, person: dict):
+#Изменение элемента
+async def set(engine, person: dict):
      async with engine.acquire() as conn:
          await conn.execute(sa.update(users).values({'first_name': person['first_name'], "last_name": person['last_name']}).where((users.c.id == person['id'])))
 
@@ -80,13 +80,13 @@ async def get_list(engine, filter: dict, order: List[dict], limit: int, offset: 
             like = filter['last_name']['like']
             async for row in conn.execute(users.select()):
                 if like in row.last_name:
-                    list_lname.append(temp_dist)
+                    list_lname.append({'id': row.id, 'first_name': row.first_name, 'last_name' : row.last_name})
                     #print(row.id, row.first_name, row.last_name)
         elif 'ilike' in filter['last_name']:
             ilike = filter['last_name']['ilike']
             async for row in conn.execute(users.select()):
                 if ilike.lower() in row.last_name.lower():
-                    list_lname.append(temp_dist)
+                    list_lname.append({'id': row.id, 'first_name': row.first_name, 'last_name' : row.last_name})
                     #print(row.id, row.first_name, row.last_name)
 
         # Фильтр для имени
@@ -122,12 +122,13 @@ async def get_list(engine, filter: dict, order: List[dict], limit: int, offset: 
     #Ограничения количества
     list = []
     if offset < len(list_fname):
-        for i in range(offset, len(list_fname)-1):
+        for i in range(offset, len(list_fname)):
             list.append(list_fname[i])
 
     if len(list) > limit:
+        edge = limit
         for i in range((limit), (len(list))):
-            list.pop(i)
+            list.pop(edge)
 
 
     for i in range(len(list)):
@@ -190,23 +191,22 @@ async def get_count(engine, filter: dict) -> int:
 
 
 
+
 async def go():
 
     async with create_engine(user='postgres',
                              database='people_vladimir',
                              host='127.0.0.1',
-                             password='1234') as engine:
-
+                             password='1234'
+                             ) as engine:
 
         #await add(engine, {'first_name': 'Zlata', 'last_name': 'Protivogaz'})
-        #await change(engine, {'id': 11, 'first_name': 'Jorno', 'last_name': 'Jorvano'})
+        #await set(engine, {'id': 3, 'first_name': 'Jorno', 'last_name': 'Jorvano'})
         #await  delete(engine, 2)
-        #await get(engine, 11)
-        #await get_list(engine, {'last_name': {'like': 'Bo','values': ['Ivanov', 'Protivogaz']}, 'first_name': {'values': ['Ivan', 'Stas']}}, {'sdf': 'wef'}, 10, 0)
-        #await get_list(engine, {"first_name": {"like": "ergerger"}, "last_name": {"ilike": "A"}}, [{"field": "id", "direction": "asc or desc"}], 10, 0)
-        #await get_list(engine, {"first_name": {"ilike": 'a'}, "last_name": {"values": ['Protivogaz']}}, [{'field': 'first_name', 'direction': 'asc'}], 3, 1)
-        #await get_count(engine, {"first_name": {"ilike": 'a'}, "last_name": {"values": ['Protivogaz']}})
-
+        #await get(engine, '3')
+        #await get_list(engine, {"first_name": {"ilike": "a"}, "last_name": {"ilike": "A"}}, [{"field": "id", "direction": "asc or desc"}], 10, 0)
+        await get_list(engine, {"first_name": {"ilike": 'a'}, "last_name": {"ilike": 'a'}}, [{'field': 'id', 'direction': 'asc'}], 20, 4)
+        #await get_count(engine, {"first_name": {"ilike": 'r'}, "last_name": {"values": ['Protivogaz']}})
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(go())
