@@ -190,7 +190,12 @@ async def get_count(engine, filter: dict) -> int:
     return len(list)
 
 
-
+async def get_all(engine):
+    async with engine.acquire() as conn:
+        res = []
+        async for row in conn.execute(users.select()):
+            res.append({"id": row.id, "first_name": row.first_name, "last_name": row.last_name})
+        return res
 
 async def go():
 
@@ -205,7 +210,7 @@ async def go():
         #await  delete(engine, 2)
         #await get(engine, '3')
         #await get_list(engine, {"first_name": {"ilike": "a"}, "last_name": {"ilike": "A"}}, [{"field": "id", "direction": "asc or desc"}], 10, 0)
-        await get_list(engine, {"first_name": {"ilike": 'a'}, "last_name": {"ilike": 'a'}}, [{'field': 'id', 'direction': 'asc'}], 20, 4)
+        await get_list(engine, {"first_name": {"ilike": 'a'}, "last_name": {"ilike": 'a'}}, [{'field': 'id', 'direction': 'asc'}], 20, 1)
         #await get_count(engine, {"first_name": {"ilike": 'r'}, "last_name": {"values": ['Protivogaz']}})
 
 loop = asyncio.get_event_loop()

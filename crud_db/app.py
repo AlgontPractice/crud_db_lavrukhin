@@ -1,84 +1,15 @@
 """
 Application factory module
 """
-import asyncio
 import logging
-import logging.config
 import socket
 from asyncio import AbstractEventLoop
-from typing import List
-
+from crud_db_lavrukhin.crud_db.api.db_api import JSONRPC_crud
 import aiohttp_cors
 from aiohttp import web
-from aiohttp_jsonrpc import handler
+
 from aiopg.sa import engine, create_engine
-from crud_db_lavrukhin.crud_db.db_people.init_db import set
-from crud_db_lavrukhin.crud_db.db_people.init_db import add
-from crud_db_lavrukhin.crud_db.db_people.init_db import delete
-from crud_db_lavrukhin.crud_db.db_people.init_db import get_list
-from crud_db_lavrukhin.crud_db.db_people.init_db import get_count
-from crud_db_lavrukhin.crud_db.db_people.init_db import get
 logger = logging.getLogger('app')
-
-
-class JSONRPC_crud(handler.JSONRPCView):
-    @property
-    def _engine(self):
-        return self.request.app['engine']
-
-
-    async def rpc_add(self, person: dict) -> str:
-        async with create_engine(user='postgres',
-                                 database='people_vladimir',
-                                 host='127.0.0.1',
-                                 password='1234'
-                                 ) as engine:
-            return await add(engine, person)
-
-    async def rpc_set(self, person: dict):
-        async with create_engine(user='postgres',
-                                 database='people_vladimir',
-                                 host='127.0.0.1',
-                                 password='1234'
-                                 ) as engine:
-            await set(engine, person)
-        return 'Success'
-
-    async def rpc_delete(self, id: str):
-        async with create_engine(user='postgres',
-                                 database='people_vladimir',
-                                 host='127.0.0.1',
-                                 password='1234'
-                                 ) as engine:
-            await delete(engine, id)
-        return 'Success'
-
-
-    async def rpc_get_list(self,filter: dict, order: List[dict],limit: int, offset: int):
-        async with create_engine(user='postgres',
-                                 database='people_vladimir',
-                                 host='127.0.0.1',
-                                 password='1234'
-                                 ) as engine:
-            return await get_list(engine, filter, order, limit, offset)
-
-
-    async def rpc_get_count(self, filter: dict):
-        async with create_engine(user='postgres',
-                                 database='people_vladimir',
-                                 host='127.0.0.1',
-                                 password='1234'
-                                 ) as engine:
-            return await get_count(engine, filter)
-
-    async def rpc_get(self, id: str):
-        async with create_engine(user='postgres',
-                                 database='people_vladimir',
-                                 host='127.0.0.1',
-                                 password='1234'
-                                 ) as engine:
-             return await get(engine, id)
-
 
 async def on_app_start(app):
     """
@@ -87,8 +18,8 @@ async def on_app_start(app):
     assert 'config' in app
 
     app['localhost'] = socket.gethostbyname(socket.gethostname())
-    app['engine'] = create_engine(user='postgres',
-                             database='people_lavrukhin',
+    app['engine'] = await create_engine(user='postgres',
+                             database='people_vladimir',
                              host='192.168.1.245',
                              password='postgres',
                              port='5432')
